@@ -6,8 +6,9 @@ data Expr = BTrue
           | BFalse 
           | Num Int 
           | Add Expr Expr 
+          | Mul Expr Expr--
           | And Expr Expr 
-          | Mul Expr Expr
+          | Or Expr Expr --
           | Eq Expr Expr
           | If Expr Expr Expr 
           | Var String 
