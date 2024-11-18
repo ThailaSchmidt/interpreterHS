@@ -11,6 +11,7 @@ data Expr = BTrue
           | Or Expr Expr --
           | Not Expr --
           | Eq Expr Expr
+          | MrEq Expr Expr --
           | If Expr Expr Expr 
           | Var String 
           | Lam String Ty Expr 
@@ -26,8 +27,12 @@ data Token = TokenTrue
            | TokenFalse 
            | TokenNum Int 
            | TokenAdd 
+           | TokenMul
            | TokenAnd 
+           | TokenOr
+           | TokenNot
            | TokenEq
+           | TokenMrEq
            | TokenIf
            | TokenThen
            | TokenElse 
@@ -39,8 +44,10 @@ data Token = TokenTrue
 lexer :: String -> [Token]
 lexer [] = [] 
 lexer ('+':cs) = TokenAdd : lexer cs 
+lexer ('*':cs) = TokenMul : lexer cs 
 lexer ('\\':cs) = TokenLam : lexer cs 
 lexer ('=':'=':cs) = TokenEq : lexer cs 
+lexer ('>':'=':cs) = TokenMrEq : lexer cs
 lexer ('-':'>':cs) = TokenArrow : lexer cs 
 lexer (c:cs) 
    | isSpace c = lexer cs 
@@ -56,6 +63,8 @@ lexerKW cs = case span isAlpha cs of
                ("true", rest) -> TokenTrue : lexer rest 
                ("false", rest) -> TokenFalse : lexer rest 
                ("and", rest) -> TokenAnd : lexer rest 
+               ("or", rest) -> TokenOr : lexer rest
+               ("not", rest) -> TokenNot : lexer rest
                ("if", rest) -> TokenIf : lexer rest 
                ("then", rest) -> TokenThen : lexer rest 
                ("else", rest) -> TokenElse : lexer rest 

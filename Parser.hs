@@ -193,6 +193,10 @@ happyNewToken action sts stk (tk:tks) =
 	TokenIf -> cont 11;
 	TokenThen -> cont 12;
 	TokenElse -> cont 13;
+     TokenMul -> cont 14;
+     TokenOr -> cont 15;
+     TokenNot -> cont 16;
+     TokenMrEq -> cont 17;
 	_ -> happyError' ((tk:tks), [])
 	}
 
