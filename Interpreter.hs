@@ -47,6 +47,10 @@ step (Or BFalse e) = step e
 step (Or BTrue _) = BTrue
 step (Or e1 e2) = Or (step e1) e2
 
+step (Not BFalse) = BTrue
+step (Not BTrue) = BFalse
+step (Not e) = Not (step e)
+
 step (Eq e1 e2) | isValue e1 && isValue e2 = if (e1 == e2) then 
                                                BTrue 
                                              else 

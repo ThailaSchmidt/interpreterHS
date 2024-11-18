@@ -9,6 +9,7 @@ data Expr = BTrue
           | Mul Expr Expr--
           | And Expr Expr 
           | Or Expr Expr --
+          | Not Expr --
           | Eq Expr Expr
           | If Expr Expr Expr 
           | Var String 
