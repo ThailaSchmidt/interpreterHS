@@ -7,6 +7,7 @@ data Expr = BTrue
           | Num Int 
           | Add Expr Expr 
           | And Expr Expr 
+          | Mul Expr Expr
           | Eq Expr Expr
           | If Expr Expr Expr 
           | Var String 

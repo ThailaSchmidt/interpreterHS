@@ -33,6 +33,12 @@ step (Add (Num n1) (Num n2)) = Num (n1 + n2)
 step (Add (Num nv) e2) = let e2' = step e2 
                            in Add (Num nv) e2' 
 step (Add e1 e2) = Add (step e1) e2 
+
+step (Mul (Num n1) (Num n2)) = Num (n1 * n2)
+step (Mul (Num nv) e2) = let e2' = step e2 
+                          in Mul (Num nv) e2' 
+step (Mul e1 e2) = Mul (step e1) e2
+
 step (And BFalse e) = BFalse 
 step (And BTrue e) = e 
 step (And e1 e2) = And (step e1) e2 
