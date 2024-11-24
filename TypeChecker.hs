@@ -11,6 +11,9 @@ typeof _ BFalse = Just TBool
 typeof ctx (Add e1 e2) = case (typeof ctx e1, typeof ctx e2) of 
                            (Just TNum, Just TNum) -> Just TNum
                            _ -> Nothing 
+typeof ctx (Sub e1 e2) = case (typeof ctx e1, typeof ctx e2) of 
+                           (Just TNum, Just TNum) -> Just TNum
+                           _ -> Nothing                            
 typeof ctx (Mul e1 e2) = case (typeof ctx e1, typeof ctx e2) of 
                            (Just TNum, Just TNum) -> Just TNum
                            _ -> Nothing 

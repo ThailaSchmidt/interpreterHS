@@ -21,9 +21,9 @@ happyExpList = Happy_Data_Array.listArray (0,44) ([1136,4,0,14,0,18176,11776,113
 {-# NOINLINE happyExpListPerState #-}
 happyExpListPerState st =
     token_strs_expected
-  where token_strs = ["error","%dummy","%start_parser","Exp","true","false","num","'+'","and","\"==\"","if","then","else","%eof"]
-        bit_start = st * 14
-        bit_end = (st + 1) * 14
+  where token_strs = ["error","%dummy","%start_parser","Exp","true","false","num","'+'","'-'","'*'","and","or","not","\"==\"","\">=\"","if","then","else","%eof"]
+        bit_start = st * 19
+        bit_end = (st + 1) * 19
         read_bit = readArrayBit happyExpList
         bits = map read_bit [bit_start..bit_end - 1]
         bits_indexed = zip bits [0..13]
@@ -197,6 +197,7 @@ happyNewToken action sts stk (tk:tks) =
      TokenOr -> cont 15;
      TokenNot -> cont 16;
      TokenMrEq -> cont 17;
+     TokenSub -> cont 18;
 	_ -> happyError' ((tk:tks), [])
 	}
 

@@ -2,6 +2,7 @@ module Interpreter where
 
 import Lexer 
 
+-- verifica se uma expressão é um valor
 isValue :: Expr -> Bool
 isValue BTrue = True 
 isValue BFalse = True 
@@ -10,6 +11,7 @@ isValue (Lam _ _ _) = True
 isValue _ = False 
 
 -- Função: subst
+-------------------- Substitui uma variável (x) por uma nova expressão (n) no corpo da função (b)
 -- Parâmetros: Variável (Parâmetro formal), 
 --             Expressão (Parâmetro atual), 
 --             Corpo da função
@@ -33,6 +35,7 @@ subst x n (Lam v t b) = (Lam v t (subst x n b))
 subst x n (App e1 e2) = (App (subst x n e1) (subst x n e2))
 subst _ _ e = e
 
+--Step realiza um único passo de avaliação em uma expressão
 step :: Expr -> Expr 
 step (Add (Num n1) (Num n2)) = Num (n1 + n2)
 step (Add (Num nv) e2) = let e2' = step e2 
@@ -83,6 +86,7 @@ step (App (Lam v t b) e) | isValue e = subst v e b
                          | otherwise = (App (Lam v t b) (step e))
 step (App e1 e2) = App (step e1) e2 
 
+--eval avalia completamente a expressão
 eval :: Expr -> Expr 
 eval e | isValue e = e 
        | otherwise = eval (step e)

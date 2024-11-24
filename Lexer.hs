@@ -2,6 +2,7 @@ module Lexer where
 
 import Data.Char
 
+--define o tipo de dados das expressões
 data Expr = BTrue 
           | BFalse 
           | Num Int 
@@ -19,11 +20,13 @@ data Expr = BTrue
           | App Expr Expr
           deriving (Show, Eq)
 
+--tipo de dados para os tipos
 data Ty = TBool 
         | TNum 
         | TFun Ty Ty 
         deriving (Show, Eq)
 
+--tipos de dados para os tokens
 data Token = TokenTrue
            | TokenFalse 
            | TokenNum Int 
@@ -43,6 +46,7 @@ data Token = TokenTrue
            | TokenArrow 
            deriving Show
 
+--converte uma string em uma lista de tokens
 lexer :: String -> [Token]
 lexer [] = [] 
 lexer ('+':cs) = TokenAdd : lexer cs 
@@ -57,10 +61,12 @@ lexer (c:cs)
    | isAlpha c = lexerKW (c:cs) 
    | isDigit c = lexerNum (c:cs)
 
+--processa números (inteiros) e os converte em tokens TokenNum
 lexerNum :: String -> [Token]
 lexerNum cs = case span isDigit cs of 
                 (num, rest) -> TokenNum (read num) : lexer rest
 
+--processa palavras-chave e variáveis
 lexerKW :: String -> [Token]
 lexerKW cs = case span isAlpha cs of 
                ("true", rest) -> TokenTrue : lexer rest 
