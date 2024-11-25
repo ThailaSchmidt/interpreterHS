@@ -46,6 +46,10 @@ typeof ctx (App e1 e2) = case (typeof ctx e1, typeof ctx e2) of
                            (Just (TFun t11 t12), Just t2) | t11 == t2 -> Just t12 
                                                           | otherwise -> Nothing 
                            _ -> Nothing
+typeof ctx (List elems) = case mapM (typeof ctx) elems of 
+                            Just (t:ts) | all (== t) ts -> Just (TList t)  -- todos os elementos devem ter o mesmo tipo
+                                        | otherwise -> Nothing
+                            _ -> Nothing
 
 typecheck :: Expr -> Expr 
 typecheck e = case typeof [] e of 

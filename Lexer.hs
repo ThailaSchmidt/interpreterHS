@@ -18,12 +18,14 @@ data Expr = BTrue
           | Var String 
           | Lam String Ty Expr 
           | App Expr Expr
+          | List [Expr] --listas
           deriving (Show, Eq)
 
 --tipo de dados para os tipos
 data Ty = TBool 
         | TNum 
         | TFun Ty Ty 
+        | TList Ty    -- Tipo para listas, que leva o tipo dos elementos
         deriving (Show, Eq)
 
 --tipos de dados para os tokens
@@ -44,6 +46,9 @@ data Token = TokenTrue
            | TokenVar String
            | TokenLam 
            | TokenArrow 
+           | TokenLBracket  -- Token [
+           | TokenRBracket  -- Token ]
+           | TokenComma     -- Token para a vírgula que separa os elementos da lista
            deriving Show
 
 --converte uma string em uma lista de tokens
@@ -56,6 +61,9 @@ lexer ('\\':cs) = TokenLam : lexer cs
 lexer ('=':'=':cs) = TokenEq : lexer cs 
 lexer ('>':'=':cs) = TokenMrEq : lexer cs
 lexer ('-':'>':cs) = TokenArrow : lexer cs 
+lexer ('[':cs) = TokenLBracket : lexer cs  -- L
+lexer (']':cs) = TokenRBracket : lexer cs  -- L
+lexer (',':cs) = TokenComma : lexer cs    -- L
 lexer (c:cs) 
    | isSpace c = lexer cs 
    | isAlpha c = lexerKW (c:cs) 
