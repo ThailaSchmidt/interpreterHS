@@ -5,4 +5,6 @@ import Parser
 import Interpreter
 import TypeChecker
 
-main = getContents >>= print . eval . typecheck . parser . lexer
+main = do
+    input <- readFile "./exemplos/ex3.mylenguage"  
+    print . eval . typecheck . parser . lexer $ input
