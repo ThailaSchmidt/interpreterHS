@@ -18,12 +18,41 @@ data Expr = BTrue
           | Var String 
           | Lam String Ty Expr 
           | App Expr Expr
-          deriving (Show, Eq)
+          | Cons Expr Expr -- construtor cons
+          | IsNil Expr    -- testa se é lista vazia
+          | Nil 
+          | Head Expr     -- acessa o primeiro elemento
+          | Tail Expr     -- acessa a cauda
+          deriving (Eq)
+
+-- Instância Show para o tipo Expr
+instance Show Expr where
+    show BTrue = "True"
+    show BFalse = "False"
+    show (Num n) = show n
+    show (Add e1 e2) = "(" ++ show e1 ++ " + " ++ show e2 ++ ")"
+    show (Sub e1 e2) = "(" ++ show e1 ++ " - " ++ show e2 ++ ")"
+    show (Mul e1 e2) = "(" ++ show e1 ++ " * " ++ show e2 ++ ")"
+    show (And e1 e2) = "(" ++ show e1 ++ " && " ++ show e2 ++ ")"
+    show (Or e1 e2) = "(" ++ show e1 ++ " || " ++ show e2 ++ ")"
+    show (Not e) = "!" ++ show e
+    show (Eq e1 e2) = "(" ++ show e1 ++ " == " ++ show e2 ++ ")"
+    show (MrEq e1 e2) = "(" ++ show e1 ++ " >= " ++ show e2 ++ ")"
+    show (If e1 e2 e3) = "if " ++ show e1 ++ " then " ++ show e2 ++ " else " ++ show e3
+    show (Var v) = v
+    show (Lam v t e) = "(\\" ++ v ++ " -> " ++ show e ++ ")"
+    show (App e1 e2) = "(" ++ show e1 ++ " " ++ show e2 ++ ")"
+    show (Cons e1 e2) = show e1 ++ " , " ++ show e2 
+    show Nil = "[]"
+    show (IsNil e) = show e
+    show (Head e) = show e
+    show (Tail e) = show e
 
 --tipo de dados para os tipos
 data Ty = TBool 
         | TNum 
         | TFun Ty Ty 
+        | TList Ty  --tipo para listas
         deriving (Show, Eq)
 
 --tipos de dados para os tokens
@@ -44,6 +73,10 @@ data Token = TokenTrue
            | TokenVar String
            | TokenLam 
            | TokenArrow 
+           | TokenCons -- 
+           | TokenIsNil -- 
+           | TokenHead -- 
+           | TokenTail -- 
            deriving Show
 
 --converte uma string em uma lista de tokens
@@ -56,6 +89,10 @@ lexer ('\\':cs) = TokenLam : lexer cs
 lexer ('=':'=':cs) = TokenEq : lexer cs 
 lexer ('>':'=':cs) = TokenMrEq : lexer cs
 lexer ('-':'>':cs) = TokenArrow : lexer cs 
+lexer (':':cs) = TokenCons : lexer cs -- Construtor Cons
+lexer ('.':cs) = TokenIsNil : lexer cs -- IsNil
+lexer ('#':cs) = TokenHead : lexer cs -- Head
+lexer ('@':cs) = TokenTail : lexer cs -- Tail
 lexer (c:cs) 
    | isSpace c = lexer cs 
    | isAlpha c = lexerKW (c:cs) 

@@ -1,4 +1,1 @@
-if 10+2 >= 12 then 
-    7*8 
-else 
-    8
+ Add (Num 5) (Num 10)

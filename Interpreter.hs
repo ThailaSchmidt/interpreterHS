@@ -8,6 +8,7 @@ isValue BTrue = True
 isValue BFalse = True 
 isValue (Num _) = True 
 isValue (Lam _ _ _) = True
+isValue (Cons _ _) = True  -- Lista não vazia é um valor 
 isValue _ = False 
 
 -- Função: subst
@@ -33,6 +34,10 @@ subst x n (MrEq e1 e2) = (MrEq (subst x n e1) (subst x n e2))
 subst x n (If e e1 e2) = (If (subst x n e) (subst x n e1) (subst x n e2))
 subst x n (Lam v t b) = (Lam v t (subst x n b))
 subst x n (App e1 e2) = (App (subst x n e1) (subst x n e2))
+subst x n (Cons e1 e2) = Cons (subst x n e1) (subst x n e2)
+subst x n (IsNil e) = IsNil (subst x n e)
+subst x n (Head e) = Head (subst x n e)
+subst x n (Tail e) = Tail (subst x n e)
 subst _ _ e = e
 
 --Step realiza um único passo de avaliação em uma expressão
@@ -85,6 +90,19 @@ step (If e e1 e2) = If (step e) e1 e2
 step (App (Lam v t b) e) | isValue e = subst v e b 
                          | otherwise = (App (Lam v t b) (step e))
 step (App e1 e2) = App (step e1) e2 
+
+-- LISTAS
+step (Cons e1 e2) = Cons (step e1) (step e2)
+
+step (IsNil Nil) = BTrue
+step (IsNil (Cons _ _)) = BFalse
+step (IsNil _) = error "Não é uma lista"               -- Se não for nem Nil nem Cons, é um erro ou valor não válido
+
+step (Head (Cons e1 _)) = e1  -- Retorna o primeiro elemento
+step (Head _) = error "Head aplicado a algo que não é uma lista"
+
+step (Tail (Cons _ e2)) = e2  -- Acessa a cauda
+step (Tail (IsNil _)) = error "Cannot apply tail to an empty list"
 
 
 --eval avalia completamente a expressão

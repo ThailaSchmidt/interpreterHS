@@ -46,7 +46,19 @@ typeof ctx (App e1 e2) = case (typeof ctx e1, typeof ctx e2) of
                            (Just (TFun t11 t12), Just t2) | t11 == t2 -> Just t12 
                                                           | otherwise -> Nothing 
                            _ -> Nothing
-
+-- Adicionando a verificação para listas
+typeof ctx (Cons e1 e2) = case (typeof ctx e1, typeof ctx e2) of
+                            (Just t1, Just (TList t2)) | t1 == t2 -> Just (TList t1)
+                            _ -> Nothing
+typeof ctx (IsNil e) = case typeof ctx e of
+                         Just (TList _) -> Just TBool
+                         _ -> Nothing
+typeof ctx (Head e) = case typeof ctx e of
+                        Just (TList t) -> Just t
+                        _ -> Nothing
+typeof ctx (Tail e) = case typeof ctx e of
+                        Just (TList t) -> Just (TList t)
+                        _ -> Nothing
 
 typecheck :: Expr -> Expr 
 typecheck e = case typeof [] e of 
