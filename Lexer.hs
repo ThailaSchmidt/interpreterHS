@@ -89,16 +89,12 @@ lexer ('\\':cs) = TokenLam : lexer cs
 lexer ('=':'=':cs) = TokenEq : lexer cs 
 lexer ('>':'=':cs) = TokenMrEq : lexer cs
 lexer ('-':'>':cs) = TokenArrow : lexer cs 
-lexer (':':cs) = TokenCons : lexer cs -- Construtor Cons
-lexer ('.':cs) = TokenIsNil : lexer cs -- IsNil
-lexer ('#':cs) = TokenHead : lexer cs -- Head
-lexer ('@':cs) = TokenTail : lexer cs -- Tail
 lexer (c:cs) 
    | isSpace c = lexer cs 
    | isAlpha c = lexerKW (c:cs) 
    | isDigit c = lexerNum (c:cs)
 
---processa números (inteiros) e os converte em tokens TokenNum
+--processa números e os converte em tokens TokenNum
 lexerNum :: String -> [Token]
 lexerNum cs = case span isDigit cs of 
                 (num, rest) -> TokenNum (read num) : lexer rest
@@ -114,5 +110,9 @@ lexerKW cs = case span isAlpha cs of
                ("if", rest) -> TokenIf : lexer rest 
                ("then", rest) -> TokenThen : lexer rest 
                ("else", rest) -> TokenElse : lexer rest 
+               ("cons", rest) -> TokenCons : lexer rest
+               ("isnil", rest) -> TokenIsNil : lexer rest
+               ("head", rest) -> TokenHead : lexer rest
+               ("tail", rest) -> TokenTail : lexer rest
                (var, rest) -> TokenVar var : lexer rest
 

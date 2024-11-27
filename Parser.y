@@ -23,15 +23,16 @@ import Lexer
   if            { TokenIf }
   then          { TokenThen }
   else          { TokenElse }
-  ":"            { TokenCons }
-  "."            { TokenIsNil }
-  "#"            { TokenHead }
-  "@"            { TokenTail }
+  cons          { TokenCons }
+  isnil         { TokenIsNil }
+  head          { TokenHead }
+  tail          { TokenTail }
 
 %nonassoc if then else 
 %left "==" 
 %left ">=" 
-%left '+' '-' '*' 
+%left '+' '-' 
+%left '*'
 %left "and"
 %left "or"
 %right "not"
@@ -52,10 +53,10 @@ Exp : true                        { BTrue }
     | Exp ">=" Exp                { MrEq $1 $3 }
     | if Exp then Exp else Exp    { If $2 $4 $6 }
     -- Regras para expressões de listas e operações
-    | Exp ":" Exp                 { Cons $1 $3 }       -- Construção de listas
-    | "." Exp                     { IsNil $2 }         -- Verifica se uma lista está vazia
-    | "#" Exp                     { Head $2 }          -- Cabeça de uma lista
-    | "@" Exp                     { Tail $2 }          -- Cauda de uma lista   
+    | cons Exp Exp                { Cons $2 $3 }       -- Construção de listas
+    | isnil Exp                   { IsNil $2 }         -- Verifica se uma lista está vazia
+    | head Exp                    { Head $2 }          -- Cabeça de uma lista
+    | tail Exp                    { Tail $2 }          -- Cauda de uma lista   
 
 {
 parseError :: [Token] -> a 
