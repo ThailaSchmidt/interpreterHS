@@ -20,12 +20,12 @@ data Expr = BTrue
           | App Expr Expr
           | Cons Expr Expr -- construtor cons
           | IsNil Expr    -- testa se é lista vazia
-          | Nil 
+          | Nil           -- null
           | Head Expr     -- acessa o primeiro elemento
           | Tail Expr     -- acessa a cauda
           deriving (Eq)
 
--- Instância Show para o tipo Expr
+-- mostra as expr bonitinhas
 instance Show Expr where
     show BTrue = "True"
     show BFalse = "False"
@@ -48,14 +48,13 @@ instance Show Expr where
     show (Head e) = show e
     show (Tail e) = show e
 
---tipo de dados para os tipos
+--tipo de dados
 data Ty = TBool 
         | TNum 
         | TFun Ty Ty 
         | TList Ty  --tipo para listas
         deriving (Show, Eq)
 
---tipos de dados para os tokens
 data Token = TokenTrue
            | TokenFalse 
            | TokenNum Int 
@@ -72,11 +71,13 @@ data Token = TokenTrue
            | TokenElse 
            | TokenVar String
            | TokenLam 
-           | TokenArrow 
-           | TokenCons -- 
-           | TokenIsNil -- 
-           | TokenHead -- 
-           | TokenTail -- 
+           | TokenArrow
+           --Listas
+           | TokenCons 
+           | TokenIsNil 
+           | TokenNil
+           | TokenHead 
+           | TokenTail 
            deriving Show
 
 --converte uma string em uma lista de tokens
@@ -94,7 +95,7 @@ lexer (c:cs)
    | isAlpha c = lexerKW (c:cs) 
    | isDigit c = lexerNum (c:cs)
 
---processa números e os converte em tokens TokenNum
+--processa valores e os converte em tokens 
 lexerNum :: String -> [Token]
 lexerNum cs = case span isDigit cs of 
                 (num, rest) -> TokenNum (read num) : lexer rest
@@ -110,8 +111,10 @@ lexerKW cs = case span isAlpha cs of
                ("if", rest) -> TokenIf : lexer rest 
                ("then", rest) -> TokenThen : lexer rest 
                ("else", rest) -> TokenElse : lexer rest 
+               --Listas
                ("cons", rest) -> TokenCons : lexer rest
                ("isnil", rest) -> TokenIsNil : lexer rest
+               ("nil", rest) -> TokenNil : lexer rest 
                ("head", rest) -> TokenHead : lexer rest
                ("tail", rest) -> TokenTail : lexer rest
                (var, rest) -> TokenVar var : lexer rest

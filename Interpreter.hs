@@ -8,7 +8,7 @@ isValue BTrue = True
 isValue BFalse = True 
 isValue (Num _) = True 
 isValue (Lam _ _ _) = True
-isValue (Cons _ _) = True  -- Lista não vazia é um valor 
+isValue (Cons _ _) = True  -- lista não vazia é um valor 
 isValue _ = False 
 
 -- Função: subst
@@ -40,7 +40,7 @@ subst x n (Head e) = Head (subst x n e)
 subst x n (Tail e) = Tail (subst x n e)
 subst _ _ e = e
 
---Step realiza um único passo de avaliação em uma expressão
+-- step realiza um único passo de avaliação em uma expressão
 step :: Expr -> Expr 
 step (Add (Num n1) (Num n2)) = Num (n1 + n2)
 step (Add (Num nv) e2) = let e2' = step e2 
@@ -93,19 +93,19 @@ step (App e1 e2) = App (step e1) e2
 
 -- LISTAS
 step (Cons e1 e2)
-  | not (isValue e1) = Cons (step e1) e2  -- Primeiro avalia e1
-  | not (isValue e2) = Cons e1 (step e2)  -- Depois avalia e2
-  | otherwise = Cons e1 e2                -- Já é um valor final
+  | not (isValue e1) = Cons (step e1) e2  -- Se e1 não é um valor (precisa ser avaliado)
+  | not (isValue e2) = Cons e1 (step e2)  -- Se e2 não é um valor
+  | otherwise = Cons e1 e2                -- Se ambos e1 e e2 são valores, retornamos a lista "Cons" finalizada
 
 step (IsNil Nil) = BTrue
 step (IsNil (Cons _ _)) = BFalse
 step (IsNil _) = error "Não é uma lista"
 
-step (Head (Cons e1 _)) = e1  -- primeiro elemento
-step (Head _) = error "Head aplicado a algo que não é uma lista"
+step (Head (Cons e1 _)) = e1  -- se for um "Cons" retorna primeiro elemento 
+step (Head _) = error "Não é uma lista"
 
-step (Tail (Cons _ e2)) = e2  -- todos menos o primeiro
-step (Tail (IsNil _)) = error "Cannot apply tail to an empty list"
+step (Tail (Cons _ e2)) = e2  -- se for um "Cons" retorna o resto 
+step (Tail (IsNil _)) = error "Não é uma lista"
 
 
 --eval avalia completamente a expressão

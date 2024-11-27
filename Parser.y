@@ -3,11 +3,12 @@ module Parser where
 
 import Lexer
 }
-
+--happy
 %name parser 
 %tokentype { Token }
 %error { parseError } 
 
+-- tokens definidos de acordo com as palavras-chave
 %token 
   true          { TokenTrue }
   false         { TokenFalse }
@@ -25,21 +26,22 @@ import Lexer
   else          { TokenElse }
   cons          { TokenCons }
   isnil         { TokenIsNil }
+  nil           { TokenNil }
   head          { TokenHead }
   tail          { TokenTail }
 
 %nonassoc if then else 
-%left "==" 
+%left "==" --le da esquerda
 %left ">=" 
 %left '+' '-' 
 %left '*'
 %left "and"
 %left "or"
-%right "not"
+%right "not" --prioridade ^
 
 %% 
 
--- Regras para expressões
+-- Regras De Produção para expressões
 Exp : true                        { BTrue }
     | false                       { BFalse }
     | num                         { Num $1 }
@@ -53,10 +55,11 @@ Exp : true                        { BTrue }
     | Exp ">=" Exp                { MrEq $1 $3 }
     | if Exp then Exp else Exp    { If $2 $4 $6 }
     -- Regras para expressões de listas e operações
-    | cons Exp Exp                { Cons $2 $3 }       -- Construção de listas
-    | isnil Exp                   { IsNil $2 }         -- Verifica se uma lista está vazia
-    | head Exp                    { Head $2 }          -- Cabeça de uma lista
-    | tail Exp                    { Tail $2 }          -- Cauda de uma lista   
+    | cons Exp Exp                { Cons $2 $3 }      
+    | isnil Exp                   { IsNil $2 }         
+    | nil                         { Nil }
+    | head Exp                    { Head $2 }          
+    | tail Exp                    { Tail $2 }      
 
 {
 parseError :: [Token] -> a 
